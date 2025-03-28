@@ -56,10 +56,7 @@ const Board = () => {
   );
   const [foodCell, setFoodCell] = useState(snake.head.value.cell + 5);
   const [direction, setDirection] = useState(Direction.RIGHT);
-  const [foodShouldReverseDirection, setFoodShouldReverseDirection] = useState(
-    false,
-  );
-  const [isGameOver, setIsGameOver] = useState(false); 
+  const [isGameOver, setIsGameOver] = useState(true); 
 
   useEffect(() => {
     window.addEventListener('keydown', e => {
@@ -118,7 +115,6 @@ const Board = () => {
     const foodConsumed = nextHeadCell === foodCell;
     if (foodConsumed) {
       growSnake(newSnakeCells);
-      if (foodShouldReverseDirection) reverseSnake();
       handleFoodConsumption(newSnakeCells);
     }
 
@@ -143,17 +139,6 @@ const Board = () => {
     newSnakeCells.add(newTailCell);
   };
 
-  const reverseSnake = () => {
-    const tailNextNodeDirection = getNextNodeDirection(snake.tail, direction);
-    const newDirection = getOppositeDirection(tailNextNodeDirection);
-    setDirection(newDirection);
-
-    reverseLinkedList(snake.tail);
-    const snakeHead = snake.head;
-    snake.head = snake.tail;
-    snake.tail = snakeHead;
-  };
-
   const handleFoodConsumption = newSnakeCells => {
     const maxPossibleCellValue = BOARD_SIZE * BOARD_SIZE;
     let nextFoodCell;
@@ -163,9 +148,6 @@ const Board = () => {
         continue;
       break;
     }
-
-    const nextFoodShouldReverseDirection =
-      Math.random() < PROBABILITY_OF_DIRECTION_REVERSAL_FOOD;
 
     setFoodCell(nextFoodCell);
     setScore(score + 1);
@@ -200,7 +182,6 @@ const Board = () => {
                 const className = getCellClassName(
                   cellValue,
                   foodCell,
-                  foodShouldReverseDirection,
                   snakeCells,
                 );
                 return <div key={cellIdx} className={className}></div>;
@@ -314,7 +295,6 @@ const getOppositeDirection = direction => {
 const getCellClassName = (
   cellValue,
   foodCell,
-  foodShouldReverseDirection,
   snakeCells,
 ) => {
   let className = 'cell';
