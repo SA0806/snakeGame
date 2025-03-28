@@ -18,10 +18,22 @@
   }
   
   .cell-red {
-    background-color: red;
+    background-image: url(src/assets/255858079_41668df0-a686-4d06-8841-d4fb449db35a.svg);
+
   }
   
   .cell-purple {
     background-color: purple;
   }
   
+  .start-game-button{
+    width: 200px;
+    border-radius: 5px;
+    border: none;
+    padding: 10px;
+    font-size: 20px;
+    font-weight: 600;
+    transition: box-shadow 0.3s;
+    background-color: #ADFF2F;
+    color: #3a3a3a;
+  }
