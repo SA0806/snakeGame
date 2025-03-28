@@ -7,13 +7,6 @@ import {
 
 import './Board.css';
 
-/**
- * TODO: add a more elegant UX for before a game starts and after a game ends.
- * A game probably shouldn't start until the user presses an arrow key, and
- * once a game is over, the board state should likely freeze until the user
- * intentionally restarts the game.
- */
-
 class LinkedListNode {
   constructor(value) {
     this.value = value;
@@ -61,7 +54,7 @@ const Board = () => {
   const [snakeCells, setSnakeCells] = useState(
     new Set([snake.head.value.cell]),
   );
-  // Naively set the starting food cell 5 cells away from the starting snake cell.
+ 
   const [foodCell, setFoodCell] = useState(snake.head.value.cell + 5);
   const [direction, setDirection] = useState(Direction.RIGHT);
   const [foodShouldReverseDirection, setFoodShouldReverseDirection] = useState(
@@ -74,9 +67,6 @@ const Board = () => {
     });
   }, []);
 
-  // `useInterval` is needed; you can't naively do `setInterval` in the
-  // `useEffect` above. See the article linked above the `useInterval`
-  // definition for details.
   useInterval(() => {
     moveSnake();
   }, 150);
@@ -87,10 +77,7 @@ const Board = () => {
     if (!isValidDirection) return;
     const snakeWillRunIntoItself =
       getOppositeDirection(newDirection) === direction && snakeCells.size > 1;
-    // Note: this functionality is currently broken, for the same reason that
-    // `useInterval` is needed. Specifically, the `direction` and `snakeCells`
-    // will currently never reflect their "latest version" when `handleKeydown`
-    // is called. I leave it as an exercise to the viewer to fix this :P
+
     if (snakeWillRunIntoItself) return;
     setDirection(newDirection);
   };
@@ -130,7 +117,7 @@ const Board = () => {
 
     const foodConsumed = nextHeadCell === foodCell;
     if (foodConsumed) {
-      // This function mutates newSnakeCells.
+    
       growSnake(newSnakeCells);
       if (foodShouldReverseDirection) reverseSnake();
       handleFoodConsumption(newSnakeCells);
@@ -139,11 +126,10 @@ const Board = () => {
     setSnakeCells(newSnakeCells);
   };
 
-  // This function mutates newSnakeCells.
+ 
   const growSnake = newSnakeCells => {
     const growthNodeCoords = getGrowthNodeCoords(snake.tail, direction);
     if (isOutOfBounds(growthNodeCoords, board)) {
-      // Snake is positioned such that it can't grow; don't do anything.
       return;
     }
     const newTailCell = board[growthNodeCoords.row][growthNodeCoords.col];
@@ -164,8 +150,6 @@ const Board = () => {
     const newDirection = getOppositeDirection(tailNextNodeDirection);
     setDirection(newDirection);
 
-    // The tail of the snake is really the head of the linked list, which
-    // is why we have to pass the snake's tail to `reverseLinkedList`.
     reverseLinkedList(snake.tail);
     const snakeHead = snake.head;
     snake.head = snake.tail;
@@ -175,10 +159,7 @@ const Board = () => {
   const handleFoodConsumption = newSnakeCells => {
     const maxPossibleCellValue = BOARD_SIZE * BOARD_SIZE;
     let nextFoodCell;
-    // In practice, this will never be a time-consuming operation. Even
-    // in the extreme scenario where a snake is so big that it takes up 90%
-    // of the board (nearly impossible), there would be a 10% chance of generating
-    // a valid new food cell--so an average of 10 operations: trivial.
+ 
     while (true) {
       nextFoodCell = randomIntFromInterval(1, maxPossibleCellValue);
       if (newSnakeCells.has(nextFoodCell) || foodCell === nextFoodCell)
